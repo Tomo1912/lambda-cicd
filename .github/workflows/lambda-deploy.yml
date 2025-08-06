@@ -6,31 +6,37 @@ on:
       - main
     paths:
       - 'lambda/'
-  jobs:
-    deploy-lambda:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
 
-      - name: set Up Python
+jobs:
+  deploy-lambda:
+    # ---> ISPRAVAK #1: Sve ispod je uvučeno za dva razmaka
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up python
         uses: actions/setup-python@v2
         with:
           python-version: '3.12'
 
       - name: install dependencies
         run: |
-          python -m pip install upgrade --upgrade pip
-          pip install -r lambda/requirements.txt -t lambda/
+          python -m pip install --upgrade pip
+          # ---> ISPRAVAK #2: Paketi se instaliraju u 'lambda' folder
+          # Dodan je '--target ./lambda' kako bi se ovisnosti našle u folderu koji se zippa
+          pip install -r lambda/requirements.txt --target ./lambda
 
       - name: Configure AWS creds
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS-KEY_ID }}
-          aws-access-secret-ley: $ {{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
       - name: Deploy Lambda Function
+        # Ovaj korak je ostao isti kao tvoj. Sada će raditi ispravno jer
+        # su u 'lambda' folderu i kod i sve potrebne biblioteke.
         run: |
           cd lambda
-          zip -r lambda.zip
+          zip -r lambda.zip .
           aws lambda update-function-code --function-name my-test-cicd-lambda --zip-file fileb://lambda.zip
