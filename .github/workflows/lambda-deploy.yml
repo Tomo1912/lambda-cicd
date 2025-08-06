@@ -5,7 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'lambda/'
+      - 'lambda/**'
+      - '.github/workflows/**'
 
 jobs:
   deploy-lambda:
