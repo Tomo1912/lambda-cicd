@@ -31,16 +31,8 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      # NOVI KORAK ZA DEBUGIRANJE
-      - name: DEBUG - Check AWS Identity and List Functions
-        run: |
-          echo "--- Checking AWS Identity ---"
-          aws sts get-caller-identity
-          echo "--- Listing Functions in eu-central-1 ---"
-          aws lambda list-functions --region eu-central-1
-
       - name: Deploy Lambda Function
         run: |
           cd lambda
           zip -r lambda.zip .
-          aws lambda update-function-code --function-name my-test-cicd-lambda --zip-file fileb://lambda.zip
+          aws lambda update-function-code --function-name my-test-ciccd-lambda --zip-file fileb://lambda.zip
